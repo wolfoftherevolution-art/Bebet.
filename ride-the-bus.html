@@ -58,14 +58,14 @@
 <body>
   <header class="wrap">
     <a class="brand" href="index.html" aria-label="BEBET home">BE<span>BE</span>T</a>
-    <div class="wallet" aria-label="Best score"><span class="coin">✦</span><span><span class="wallet-label">BEST SCORE</span><br><span class="wallet-amount" id="balance">0</span></span></div>
+    <div class="wallet" aria-label="B Chips balance"><span class="coin">B</span><span><span class="wallet-label">B CHIPS</span><br><span class="wallet-amount" id="bchips-balance">1,000</span></span></div>
   </header>
   <main class="wrap">
     <a class="back" href="index.html">← Back to BEBET</a>
     <section class="intro">
       <div class="eyebrow">BEBET original house rules</div>
       <h1>Ride the <span style="color:var(--blue)">Bus.</span></h1>
-      <p>Five card guesses. Earn points for each correct answer, then try to beat your personal best. No stakes, no cashout—just cards and a score to chase.</p>
+      <p>Five card guesses. Earn B Chips for correct answers and try to beat your personal best. No stakes or cashout—just cards, points, and a score to chase.</p>
     </section>
 
     <div class="layout">
@@ -76,11 +76,11 @@
           <span style="color:var(--muted);font-size:.8rem">+100 points per correct guess · +500 perfect-run bonus</span>
         </div>
         <div class="rounds" id="rounds">
-          <div class="round active"><small>ROUND 1</small><strong>Red / Black</strong><em>+100 pts</em></div>
-          <div class="round"><small>ROUND 2</small><strong>Higher / Lower</strong><em>+100 pts</em></div>
-          <div class="round"><small>ROUND 3</small><strong>Between / Outside</strong><em>+100 pts</em></div>
-          <div class="round"><small>ROUND 4</small><strong>Shape</strong><em>+100 pts</em></div>
-          <div class="round"><small>ROUND 5</small><strong>Number</strong><em>+100 pts</em></div>
+          <div class="round active"><small>ROUND 1</small><strong>Red / Black</strong><em>+10 B</em></div>
+          <div class="round"><small>ROUND 2</small><strong>Higher / Lower</strong><em>+20 B</em></div>
+          <div class="round"><small>ROUND 3</small><strong>Between / Outside</strong><em>+30 B</em></div>
+          <div class="round"><small>ROUND 4</small><strong>Shape</strong><em>+80 B</em></div>
+          <div class="round"><small>ROUND 5</small><strong>Number</strong><em>+160 B</em></div>
         </div>
         <div class="tabletop" aria-label="Playing cards">
           <div class="card back" id="previous-card" aria-label="Laid-out card">B</div>
@@ -95,28 +95,48 @@
           <button class="btn secondary choice" disabled>Red <span class="mult">or Black</span></button>
           <button class="btn secondary choice" disabled>Start to play <span class="mult">→</span></button>
         </div>
-        <div class="message" id="message" aria-live="polite">Ready to play? Every correct guess earns 100 points.</div>
+        <div class="message" id="message" aria-live="polite">Ready to play? Correct guesses earn B Chips.</div>
         <div class="message" id="score-message" aria-live="polite">Round score: 0</div>
       </section>
 
       <aside class="panel">
         <h2>House rules</h2>
         <div class="rule-list">
-          <div class="rule"><div class="multbox">+100</div><div><strong>Red or Black</strong><p>Guess the colour of the next card.</p></div></div>
-          <div class="rule"><div class="multbox">+100</div><div><strong>Higher or Lower</strong><p>Guess whether the next card's rank is higher or lower than the laid-out card.</p></div></div>
-          <div class="rule"><div class="multbox">+100</div><div><strong>Between or Outside</strong><p>Guess whether the next card's rank falls between or outside the two laid-out ranks.</p></div></div>
-          <div class="rule"><div class="multbox">+100</div><div><strong>Shape (suit)</strong><p>Guess hearts, diamonds, clubs, or spades.</p></div></div>
-          <div class="rule"><div class="multbox">+100</div><div><strong>Number</strong><p>Guess the exact rank of the next card.</p></div></div>
+          <div class="rule"><div class="multbox">+10 B</div><div><strong>Red or Black</strong><p>Guess the colour of the next card.</p></div></div>
+          <div class="rule"><div class="multbox">+20 B</div><div><strong>Higher or Lower</strong><p>Guess whether the next card's rank is higher or lower than the laid-out card.</p></div></div>
+          <div class="rule"><div class="multbox">+30 B</div><div><strong>Between or Outside</strong><p>Guess whether the next card's rank falls between or outside the two laid-out ranks.</p></div></div>
+          <div class="rule"><div class="multbox">+80 B</div><div><strong>Shape (suit)</strong><p>Guess hearts, diamonds, clubs, or spades.</p></div></div>
+          <div class="rule"><div class="multbox">+160 B</div><div><strong>Number</strong><p>Guess the exact rank of the next card.</p></div></div>
         </div>
-        <div class="house-rule"><strong>The BEBET rule:</strong> if a card drawn matches the rank of the laid-out card, the round ends immediately. Aces are high. Between/outside compares against the first two cards. Earn 100 points for each correct guess and a 500-point bonus for a perfect run. Your best score is saved in this browser.</div>
+        <div class="house-rule"><strong>The BEBET rule:</strong> if a card drawn matches the rank of the laid-out card, the round ends immediately. Aces are high. Between/outside compares against the first two cards. Correct guesses award 10, 20, 30, 80, or 160 B Chips by stage; a perfect run awards a 500 B Chip bonus. Your balance and best score are saved in this browser.</div>
       </aside>
     </div>
-    <p class="fineprint">Score points have no cash value. Your best score is stored locally in this browser.</p>
+    <p class="fineprint">B Chips are arcade points with no cash value. Your balance and best score are stored locally in this browser.</p>
   </main>
 
   <script>
     const BEST_KEY = 'bebet-ride-bus-best-v1';
-    const bestEl = document.getElementById('balance');
+    const BCHIPS_KEY = 'bebet-bchips-v1';
+    const bchipsEl = document.getElementById('bchips-balance');
+    let bchips = 1000;
+    try {
+      const savedChips = localStorage.getItem(BCHIPS_KEY);
+      if (savedChips !== null && Number.isFinite(Number(savedChips)) && Number(savedChips) >= 0) {
+        bchips = Math.floor(Number(savedChips));
+      } else {
+        localStorage.setItem(BCHIPS_KEY, '1000');
+      }
+    } catch (error) {}
+    function renderBchips() {
+      if (bchipsEl) bchipsEl.textContent = bchips.toLocaleString();
+    }
+    function awardBchips(amount) {
+      bchips += amount;
+      try { localStorage.setItem(BCHIPS_KEY, String(bchips)); } catch (error) {}
+      renderBchips();
+    }
+    renderBchips();
+    const bestEl = { textContent: '' };
     const startBtn = document.getElementById('start');
     const choicesEl = document.getElementById('choices');
     const questionTitle = document.getElementById('question-title');
@@ -158,7 +178,7 @@
         try { localStorage.setItem(BEST_KEY, String(bestScore)); } catch (error) {}
         bestEl.textContent = bestScore.toLocaleString();
       }
-      scoreMessageEl.textContent = `Round score: ${score.toLocaleString()} · Best: ${bestScore.toLocaleString()}`;
+      scoreMessageEl.textContent = `Round score: ${score.toLocaleString()} · Best: ${bestScore.toLocaleString()} · B Chips: ${bchips.toLocaleString()}`;
     }
     function shuffle(array) {
       for (let i=array.length-1; i>0; i--) {
@@ -200,7 +220,7 @@
         const btn=document.createElement('button');
         btn.className='btn secondary choice';
         const labelEl=document.createElement('span'); labelEl.textContent=label;
-        const pointsEl=document.createElement('span'); pointsEl.className='mult'; pointsEl.textContent='+100 pts';
+        const pointsEl=document.createElement('span'); pointsEl.className='mult'; pointsEl.textContent=['+10 B Chips','+20 B Chips','+30 B Chips','+80 B Chips','+160 B Chips'][stage];
         btn.append(labelEl,pointsEl);
         btn.addEventListener('click',()=>guess(value));
         choicesEl.appendChild(btn);
@@ -227,7 +247,7 @@
       previous=deck.pop(); history.push(previous); first=previous;
       showCard(previousCardEl,previous); showBack(drawnCardEl);
       startBtn.disabled=true;
-      scoreMessageEl.textContent='Round score: 0';
+      scoreMessageEl.textContent=`Round score: 0 · B Chips: ${bchips.toLocaleString()}`;
       renderStages(); renderChoices(); renderQuestion();
       setMessage(`First card is ${previous.name}${previous.symbol}. Choose red or black.`);
     }
@@ -254,17 +274,20 @@
         return;
       }
       if (stage===0) second=card;
-      previous=card; history.push(card); score+=100;
+      const reward = [10, 20, 30, 80, 160][stage];
+      awardBchips(reward);
+      previous=card; history.push(card); score+=reward;
       showCard(previousCardEl,card); showBack(drawnCardEl);
       stage++;
       if (stage===5) {
         score+=500;
-        endRound(`Perfect run! +500 bonus points. Final score: ${score.toLocaleString()} points!`, 'good');
+        awardBchips(500);
+        endRound(`Perfect run! +500 B Chips bonus. Final round score: ${score.toLocaleString()} points!`, 'good');
         return;
       }
-      scoreMessageEl.textContent=`Round score: ${score.toLocaleString()} · Best: ${bestScore.toLocaleString()}`;
+      scoreMessageEl.textContent=`Round score: ${score.toLocaleString()} · Best: ${bestScore.toLocaleString()} · B Chips: ${bchips.toLocaleString()}`;
       renderStages(); renderChoices(); renderQuestion();
-      setMessage(`Correct! +100 points. You have ${score.toLocaleString()} points so far.`, 'good');
+      setMessage(`Correct! +${reward} B Chips. Your balance is ${bchips.toLocaleString()} B Chips.`, 'good');
     }
     startBtn.addEventListener('click',startRound);
     saveBest(); renderStages(); renderChoices(); renderQuestion();
